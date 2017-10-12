@@ -45,10 +45,10 @@ export const SCATTERPLOT_CONTROLS = {
   radiusScale: {
     displayName: 'Scatterplot Radius',
     type: 'range',
-    value: 30,
+    value: 300,
     step: 10,
     min: 10,
-    max: 200
+    max: 500
   },
   showHexagon: {
     displayName: 'Show Hexagon',
