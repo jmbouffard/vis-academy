@@ -2,11 +2,13 @@
 import React, {Component} from 'react';
 import MapGL from 'react-map-gl';
 //import taxiData from '../../../data/taxi';
-import wsData from '../../../data/WS_Stations';
+//import wsData from '../../../data/WS_Stations';
+import wsData from '../../../data/Site_Data_QC_ON';
 import DeckGLOverlay from './deckgl-overlay';
 import {LayerControls, SCATTERPLOT_CONTROLS} from './layer-controls';
 
-const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9'; //'mapbox://styles/mapbox/streets-v10';
+//const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9'; //'mapbox://styles/mapbox/streets-v10';
+const MAPBOX_STYLE = 'mapbox://styles/jmbouffard/cjasoezw8jdpb2snwmwko9q39';
 // Set your mapbox token here
 const MAPBOX_TOKEN = process.env.MapboxAccessToken; // eslint-disable-line
 
@@ -61,11 +63,12 @@ export default class App extends Component {
       const points = wsData.reduce((accu, curr) => {
         accu.push({
           position: [Number(curr.longitude), Number(curr.latitude)],
-          pickup: true
+          new_licno: String(curr.new_licno),
+          service: String(curr.service)
         });
         return accu;
       }, []);
-      console.log(points);
+      console.log("Number of points displayed: "+points.length);
       this.setState({
         points,
         status: 'READY'
