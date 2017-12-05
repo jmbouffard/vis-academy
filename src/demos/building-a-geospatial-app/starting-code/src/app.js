@@ -5,7 +5,9 @@ import MapGL from 'react-map-gl';
 //import wsData from '../../../data/WS_Stations';
 import wsData from '../../../data/Site_Data_QC_ON';
 import DeckGLOverlay from './deckgl-overlay';
-import {LayerControls, SCATTERPLOT_CONTROLS} from './layer-controls';
+import {LayerControls, HEXAGON_CONTROLS} from './layer-controls';
+import Charts from './charts';
+import {tooltipStyle} from './style';
 
 //const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9'; //'mapbox://styles/mapbox/streets-v10';
 const MAPBOX_STYLE = 'mapbox://styles/jmbouffard/cjasoezw8jdpb2snwmwko9q39';
@@ -18,16 +20,16 @@ export default class App extends Component {
     super(props);
     this.state = {
       // add settings
-      settings: Object.keys(SCATTERPLOT_CONTROLS).reduce((accu, key) => ({
+      settings: Object.keys(HEXAGON_CONTROLS).reduce((accu, key) => ({
         ...accu,
-        [key]: SCATTERPLOT_CONTROLS[key].value
+        [key]: HEXAGON_CONTROLS[key].value
       }), {}),
       viewport: {
         width: window.innerWidth,
         height: window.innerHeight,
         longitude: -75.68,//-74,
         latitude: 45.42,//40.7,
-        zoom: 11,
+        zoom: 8,
         maxZoom: 16
       }
     };
@@ -42,6 +44,10 @@ export default class App extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this._resize);
+  }
+
+  _onHover({x, y, object}) {
+    this.setState({x, y, hoveredObject: object});
   }
 
   _onViewportChange(viewport) {
@@ -106,9 +112,25 @@ export default class App extends Component {
   render() {
     return (
       <div>
+        {this.state.hoveredObject &&
+          <div style={{
+            ...tooltipStyle,
+            transform: `translate(${this.state.x}px, ${this.state.y}px)`
+          }}>
+            <div>{
+              JSON.stringify(this.state.hoveredObject.points)}</div>
+          </div>}
+        {/*this.state.hoveredObject &&
+        <div style={{
+          ...tooltipStyle,
+          left: this.state.new_licno,
+          top: this.state.service
+        }}>
+          <div>{this.state.hoveredObject.id}</div>
+        </div>*/}
         <LayerControls
           settings={this.state.settings}
-          propTypes={SCATTERPLOT_CONTROLS}
+          propTypes={HEXAGON_CONTROLS}
           onChange={settings => this._updateLayerSettings(settings)}/>
         <MapGL
           {...this.state.viewport}
@@ -118,8 +140,10 @@ export default class App extends Component {
           <DeckGLOverlay
             viewport={this.state.viewport}
             data={this.state.points}
+            onHover={hover => this._onHover(hover)}
             {...this.state.settings} />
         </MapGL>
+        {/*<Charts {...this.state} />*/}
       </div>
     );
   }
